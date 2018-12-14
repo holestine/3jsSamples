@@ -2,7 +2,7 @@ var express = require('express');
 var app = express();
 var path = require('path');
 
-app.use(express.static("scripts"));
+app.use(express.static('scripts'));
 app.use(express.static('textures'))
 
 // viewed at http://localhost:8080
@@ -25,7 +25,9 @@ app.get('/4.htm', function (req, res) {
 app.get('/5.htm', function (req, res) {
   res.sendFile(path.join(__dirname + '/5.htm'));
 });
-
+app.get('/lorenz.htm', function (req, res) {
+  res.sendFile(path.join(__dirname + '/Lorenz.htm'));
+});
 
 app.get('/app1.js', function (req, res) {
   res.sendFile(path.join(__dirname + '/app1.js'));
@@ -41,6 +43,9 @@ app.get('/app4.js', function (req, res) {
 });
 app.get('/app5.js', function (req, res) {
   res.sendFile(path.join(__dirname + '/app5.js'));
+});
+app.get('/lorenz.js', function (req, res) {
+  res.sendFile(path.join(__dirname + '/lorenz.js'));
 });
 
 app.get('/scripts/three.js', function(req, res) {
