@@ -5,7 +5,7 @@ var example = (function () {
   var scene = new THREE.Scene(),
     renderer = new THREE.WebGLRenderer(),
     light = new THREE.AmbientLight(0xbbbbbb), // White ambient light
-    light2 = new THREE.PointLight(0xffffff, 20, 50, 2),
+    light2 = new THREE.PointLight(0xffffff, 10, 50, 2),
     time = 0,
     camera,
     starMesh,
@@ -15,7 +15,11 @@ var example = (function () {
     rk4path,
     rk4pos,
     rk4newpos,
-    step;
+    step,
+    rate = 1;
+
+  document.getElementById("webgl-container").addEventListener("click", toggleTime);
+  function toggleTime() { rate = (rate+1)%3; }
 
   function initScene() {
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -72,9 +76,11 @@ var example = (function () {
       rk4newpos = RK4Lorenz(rk4pos, step);
     }
 
-    rk4material = new THREE.MeshLambertMaterial({
-      color: 0x55558800,
-      wireframe: false
+    rk4material = new THREE.MeshPhongMaterial({
+      color: 0x558800,
+      wireframe: false,
+      emissive: 0x115511,
+      reflectivity: 10
     });
 
     //var eulermaterial = new THREE.MeshLambertMaterial({
@@ -83,7 +89,7 @@ var example = (function () {
     //}); 
 
     rk4lorenzMesh = new THREE.Mesh(
-      new THREE.TubeGeometry(rk4path, 5000, .5, 20, false),
+      new THREE.TubeGeometry(rk4path, 5000, .4, 50, false),
       rk4material);
     scene.add(rk4lorenzMesh);
 
@@ -145,9 +151,9 @@ var example = (function () {
     starMesh.rotation.y -= 0.0005;
     starMesh.rotation.x -= 0.00025;
 
-    rk4lorenzMesh.x -= 100;
-    rk4lorenzMesh.rotation.x += 0.00125;
-    rk4lorenzMesh.rotation.y += 0.005;
+    //rk4lorenzMesh.x -= 100;
+    rk4lorenzMesh.rotation.x += 0.00125 * rate;
+    rk4lorenzMesh.rotation.y += 0.005 * rate;
 
     renderer.render(scene, camera);
     requestAnimationFrame(render);
