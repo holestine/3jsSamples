@@ -34,7 +34,7 @@ var example = (function () {
       1000                                    // Far Clipping Plane
     );
 
-    camera.position.z = 200;
+    camera.position.z = 600;
     scene.add(camera);
 
     light2.position.set(0, 0, 25);
@@ -55,9 +55,9 @@ var example = (function () {
 
 
 
-    step = .002;
+    step = .001;
     rk4path = new THREE.CurvePath();
-    rk4pos = new THREE.Vector3(150, 50, 150);
+    rk4pos = new THREE.Vector3(150, -150, 150);
     rk4newpos = RK4Lorenz(rk4pos, step);
 
     //var eulerpath = new THREE.CurvePath();
@@ -70,7 +70,7 @@ var example = (function () {
     //    eulernewpos = Euler(eulerpos, Lorenz(eulerpos), step);
     //}
 
-    for (var i = 0; i < 5000; i++) {
+    for (var i = 0; i < 10000; i++) {
       rk4path.add(new THREE.LineCurve(rk4pos, rk4newpos));
       rk4pos = rk4newpos;
       rk4newpos = RK4Lorenz(rk4pos, step);
@@ -101,9 +101,20 @@ var example = (function () {
     render();
   }
 
+  function Lorenz(pos) {
+    var SIGMA = 10;
+    var RHO = 28;
+    var BETA = 8/3;
+
+    return new THREE.Vector3(SIGMA * (pos.y - pos.x),
+                             pos.x * (RHO - pos.z) - pos.y,
+                             pos.x * pos.y - BETA * pos.z);
+  }
 
   function Euler(pos, slope, dt) {
-    return new THREE.Vector3(pos.x + slope.x * dt, pos.y + slope.y * dt, pos.z + slope.z * dt);
+    return new THREE.Vector3(pos.x + slope.x * dt, 
+                             pos.y + slope.y * dt, 
+                             pos.z + slope.z * dt);
   }
 
   function RK4Lorenz(start, dt) {
@@ -121,23 +132,15 @@ var example = (function () {
 
     // Compute weighted average of slopes according to Runge-Kutta fourth order algorithm
     var rkSlope = new THREE.Vector3(f1.x / 6 + f2.x / 3 + f3.x / 3 + f4.x / 6,
-      f1.y / 6 + f2.y / 3 + f3.y / 3 + f4.y / 6,
-      f1.z / 6 + f2.z / 3 + f3.z / 3 + f4.z / 6);
+                                    f1.y / 6 + f2.y / 3 + f3.y / 3 + f4.y / 6,
+                                    f1.z / 6 + f2.z / 3 + f3.z / 3 + f4.z / 6);
 
     // Return next position using Euler, Runge-Kutta slope and full time step
     return Euler(start, rkSlope, dt);
   }
 
-  function Lorenz(pos) {
-    var SIGMA = 10;
-    var RHO = 28;
-    var BETA = 8 / 3;
 
-    return new THREE.Vector3(SIGMA * (pos.y - pos.x),
-      pos.x * (RHO - pos.z) - pos.y,
-      pos.x * pos.y - BETA * pos.z);
-  }
-
+ 
   // Recursively draw scene
   function render() {
     //rk4path.add(new THREE.LineCurve(rk4pos, rk4newpos));
